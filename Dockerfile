@@ -13,6 +13,7 @@ ADD ./.babelrc /var/www/.babelrc
 RUN npm install
 
 ADD ./tasks /var/www/tasks
+ADD ./assets /var/www/assets
 ADD ./html /var/www/html
 
 RUN npm run build

@@ -1,38 +1,49 @@
+import { join, basename } from 'path';
 import webpack from 'webpack';
 import autoprefixer from 'autoprefixer';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import glob from 'glob';
 
 import pkg from '../package.json';
 
 const debug = process.env.NODE_ENV === 'development';
 const verbose = process.env.VERBOSE === '1';
 
-const assetsPath = __dirname + '/../html/assets';
+const assetsPath = join(__dirname, '..', 'assets');
+const targetPath = join(__dirname, '..', 'html');
 
-const extractCSS = new ExtractTextPlugin('[name]-[hash:6].css');
+const extractCSS = new ExtractTextPlugin('[name].css');
 
-const devPlugins = [];
-const prodPlugins = [
-  new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
-  extractCSS,
-];
+const plugins = {
+  dev: [
+    extractCSS
+  ],
+  prod: [
+    new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
+    extractCSS,
+  ],
+};
 
+const entries = {
+  main: './src/index.js',
+};
+
+glob.sync(join(assetsPath, 'scss', '*.scss'), { ignore: '**/_*.scss' })
+  .forEach((filename) => {
+    entries[basename(filename, '.scss')] = filename;
+  });
 
 export default {
-  entry: [
-    './src/index.js',
-    './scss',
-  ],
+  entry: entries,
 
   debug,
-  cache: debug,
   devtool: debug ? '#inline-source-map' : false,
 
   context: assetsPath,
 
   output: {
-    filename: `lib/${pkg.name}.js`,
-    path: assetsPath,
+    filename: `${pkg.name}.js`,
+    path: targetPath,
     // publicPath: '/',
   },
 
@@ -64,18 +75,10 @@ export default {
         test: /favicon\.png$/,
         loader: 'file'
       },
-      debug ? {
-        test: /\.scss/,
-        loaders: [
-          'style',
-          'css?sourceMap',
-          'postcss',
-          'sass?sourceMap&modules&localIdentName=[name]_[local]_[hash:base64:3]',
-        ]
-      } : {
+      {
         test: /\.scss/,
         loader: extractCSS.extract('style', [
-          'css',
+          'css' + (debug ? '?sourceMap' : ''),
           'postcss',
           'sass?minimize&modules&localIdentName=[name]_[local]_[hash:base64:3]',
         ])
@@ -89,7 +92,7 @@ export default {
       'process.env': { NODE_ENV: `"${process.env.NODE_ENV}"` },
       DEBUG: debug,
     }),
-  ].concat(debug ? devPlugins : prodPlugins),
+  ].concat(plugins[debug ? 'dev' : 'prod']),
 
   postcss: () => [autoprefixer],
 

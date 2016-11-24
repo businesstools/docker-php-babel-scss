@@ -3,25 +3,12 @@ import webpack from 'webpack';
 import webpackConfig from './webpack.config';
 
 export default function watch() {
-  return new Promise((resolve, reject) => {
-    webpack({ ...webpackConfig, watch: true }, (err, stats) => {
-      if (err) {
-        reject(err);
-        return;
-      }
+  webpack({ ...webpackConfig, watch: true }, (err, stats) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
 
-      const info = stats.toJson();
-
-      if (stats.hasErrors()) {
-        reject(info.errors[0]);
-        return;
-      }
-
-      if (webpackConfig.stats.assetsByChunkName) {
-        resolve(stats.toJson(webpackConfig.stats).assetsByChunkName);
-      } else {
-        resolve();
-      }
-    });
+    console.log(stats.toString(webpackConfig.stats));
   });
 }

@@ -3,6 +3,7 @@ services:
   web:
     volumes:
       - ./html:/var/www/html
+      - ./assets:/var/www/assets
       - ./tasks:/var/www/tasks
     environment:
       VIRTUAL_HOST: app.dkr

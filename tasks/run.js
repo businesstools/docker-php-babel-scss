@@ -1,7 +1,6 @@
 import { join } from 'path';
 import Ora from 'ora';
 
-
 async function run(func, options) {
   const spinner = new Ora(func.name);
   try {
