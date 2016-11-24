@@ -1,0 +1,10 @@
+version: '2'
+services:
+  web:
+    volumes:
+      - ./html:/var/www/html
+      - ./assets:/var/www/assets
+      - ./tasks:/var/www/tasks
+    environment:
+      VIRTUAL_HOST: app.dkr
+      NODE_ENV:     development
