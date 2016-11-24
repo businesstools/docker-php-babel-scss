@@ -1,0 +1,6 @@
+version: '2'
+services:
+  web:
+    environment:
+      VIRTUAL_HOST: app.example.com
+    restart: always
