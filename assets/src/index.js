@@ -2,7 +2,9 @@
 
 document.writeln('test');
 
-console.log('<:-)');
+console.log(':-)');
 
-
-console.log(__webpack_require__);
+if (module.hot) {
+  module.hot.accept();
+  // module.hot.dispose(() => {});
+}
