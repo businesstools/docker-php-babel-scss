@@ -6,6 +6,8 @@ import glob from 'glob';
 
 import pkg from '../package.json';
 
+const hmrEntry = 'webpack-hot-middleware/client';
+
 const debug = process.env.NODE_ENV === 'development';
 const verbose = process.env.VERBOSE === '1';
 
@@ -54,14 +56,16 @@ const entries = {
   main: [ './src/index.js' ]
 };
 
-if (debug) {
-  entries.main.push('webpack-hot-middleware/client');
-}
-
 glob.sync(join(assetsPath, 'scss', '*.scss'), { ignore: '**/_*.scss' })
   .forEach((filename) => {
-    entries[basename(filename, '.scss')] = filename;
+    entries[basename(filename, '.scss')] = [filename];
   });
+
+if (debug) {
+  Object.keys(entries).forEach(key => {
+    entries[key].unshift(hmrEntry);
+  });
+}
 
 export default {
   entry: entries,
