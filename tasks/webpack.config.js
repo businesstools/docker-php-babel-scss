@@ -16,7 +16,8 @@ const extractCSS = new ExtractTextPlugin('[name].css');
 
 const plugins = {
   dev: [
-    extractCSS
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin(),
   ],
   prod: [
     new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
@@ -24,9 +25,37 @@ const plugins = {
   ],
 };
 
+const loaders = {
+  dev: [
+    {
+      test: /\.scss/,
+      loaders: [
+        'style',
+        'css?sourceMap',
+        'postcss',
+        'sass?modules&localIdentName=[name]_[local]_[hash:base64:3]',
+      ],
+    },
+  ],
+  prod: [
+    {
+      test: /\.scss/,
+      loader: extractCSS.extract('style', [
+        'css',
+        'postcss',
+        'sass?minimize&modules&localIdentName=[name]_[local]_[hash:base64:3]',
+      ]),
+    },
+  ],
+}
+
 const entries = {
-  main: './src/index.js',
+  main: [ './src/index.js' ]
 };
+
+if (debug) {
+  entries.main.push('webpack-hot-middleware/client');
+}
 
 glob.sync(join(assetsPath, 'scss', '*.scss'), { ignore: '**/_*.scss' })
   .forEach((filename) => {
@@ -75,15 +104,7 @@ export default {
         test: /favicon\.png$/,
         loader: 'file'
       },
-      {
-        test: /\.scss/,
-        loader: extractCSS.extract('style', [
-          'css' + (debug ? '?sourceMap' : ''),
-          'postcss',
-          'sass?minimize&modules&localIdentName=[name]_[local]_[hash:base64:3]',
-        ])
-      },
-    ]
+    ].concat(loaders[debug ? 'dev' : 'prod'])
   },
 
   plugins: [

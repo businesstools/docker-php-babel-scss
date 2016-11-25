@@ -28,6 +28,7 @@
     "style-loader": "^0.13.1",
     "three": "^0.82.1",
     "url-loader": "^0.5.7",
-    "webpack": "^1.13.3"
+    "webpack": "^1.13.3",
+    "webpack-hot-middleware": "^2.13.2"
   }
 }
