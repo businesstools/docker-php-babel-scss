@@ -8,5 +8,3 @@ if [ "$NODE_ENV" = "development" ]; then
 else
     echo "Running in production mode"
 fi
-
-cd /var/www && npm run build &
