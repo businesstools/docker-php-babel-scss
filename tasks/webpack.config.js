@@ -16,11 +16,12 @@ const extractCSS = new ExtractTextPlugin('[name].css');
 
 const plugins = {
   dev: [
+    new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
   ],
   prod: [
-    new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
+    // new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
     extractCSS,
   ],
 };
@@ -73,7 +74,7 @@ export default {
   output: {
     filename: `${pkg.name}.js`,
     path: targetPath,
-    // publicPath: '/',
+    publicPath: '/',
   },
 
   resolve: {

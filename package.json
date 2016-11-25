@@ -17,6 +17,7 @@
     "babel-preset-stage-0": "^6.16.0",
     "babel-runtime": "^6.18.0",
     "css-loader": "^0.26.0",
+    "express": "^4.14.0",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
     "glob": "^7.1.1",
@@ -29,6 +30,7 @@
     "three": "^0.82.1",
     "url-loader": "^0.5.7",
     "webpack": "^1.13.3",
+    "webpack-dev-middleware": "^1.8.4",
     "webpack-hot-middleware": "^2.13.2"
   }
 }

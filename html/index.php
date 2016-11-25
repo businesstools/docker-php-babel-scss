@@ -2,7 +2,8 @@
   $pkg = json_decode(file_get_contents('../package.json'));
   $uri = trim($_SERVER['REQUEST_URI'], '/');
 
-  if ($uri !== '') http_response_code(404);
+  http_response_code(404);
+
 ?><!doctype html>
 <html>
 <head>

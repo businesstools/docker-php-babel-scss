@@ -17,6 +17,10 @@ export default function build() {
         return;
       }
 
+      if (process.env.VERBOSE === '1') {
+        console.log(stats.toString(webpackConfig.stats));
+      }
+
       if (webpackConfig.stats.assetsByChunkName) {
         resolve(stats.toJson(webpackConfig.stats).assetsByChunkName);
       } else {
