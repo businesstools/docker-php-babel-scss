@@ -6,3 +6,7 @@ if [ "$NODE_ENV" = "development" ]; then
 else
     echo "Running in production mode"
 fi
+
+if [ "$VIRTUAL_HOST" ]; then
+    echo "Listening on $VIRTUAL_HOST"
+fi

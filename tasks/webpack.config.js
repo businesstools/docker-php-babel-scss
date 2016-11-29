@@ -1,4 +1,4 @@
-import { join, basename } from 'path';
+import { join, basename, resolve } from 'path';
 import webpack from 'webpack';
 import autoprefixer from 'autoprefixer';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
@@ -6,17 +6,22 @@ import glob from 'glob';
 
 import pkg from '../package.json';
 
+const hmrEntry = 'webpack-hot-middleware/client';
+
 const debug = process.env.NODE_ENV === 'development';
 const verbose = process.env.VERBOSE === '1';
 
+const targetDir = 'min/';
 const assetsPath = join(__dirname, '..', 'assets');
-const targetPath = join(__dirname, '..', 'html');
+const targetPath = join(__dirname, '..', 'html', `${targetDir}`);
 
-const extractCSS = new ExtractTextPlugin('[name].css');
+const extractCSS = new ExtractTextPlugin(`${pkg.name}.css`);
 
 const plugins = {
   dev: [
-    extractCSS
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin(),
   ],
   prod: [
     new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
@@ -24,14 +29,42 @@ const plugins = {
   ],
 };
 
+const loaders = {
+  dev: [
+    {
+      test: /\.scss/,
+      loaders: [
+        'style',
+        'css?sourceMap',
+        'postcss',
+        'sass?modules&localIdentName=[name]_[local]_[hash:base64:3]',
+      ],
+    },
+  ],
+  prod: [
+    {
+      test: /\.scss/,
+      loader: extractCSS.extract('style', [
+        'css',
+        'postcss',
+        'sass?minimize&modules&localIdentName=[name]_[local]_[hash:base64:3]',
+      ]),
+    },
+  ],
+}
+
 const entries = {
-  main: './src/index.js',
+  main: [ './src/index.js' ]
 };
 
 glob.sync(join(assetsPath, 'scss', '*.scss'), { ignore: '**/_*.scss' })
   .forEach((filename) => {
-    entries[basename(filename, '.scss')] = filename;
+    entries.main.push(filename);
   });
+
+if (debug) {
+  entries.main.unshift(hmrEntry);
+}
 
 export default {
   entry: entries,
@@ -44,7 +77,7 @@ export default {
   output: {
     filename: `${pkg.name}.js`,
     path: targetPath,
-    // publicPath: '/',
+    publicPath: `/${targetDir}`,
   },
 
   resolve: {
@@ -75,15 +108,7 @@ export default {
         test: /favicon\.png$/,
         loader: 'file'
       },
-      {
-        test: /\.scss/,
-        loader: extractCSS.extract('style', [
-          'css' + (debug ? '?sourceMap' : ''),
-          'postcss',
-          'sass?minimize&modules&localIdentName=[name]_[local]_[hash:base64:3]',
-        ])
-      },
-    ]
+    ].concat(loaders[debug ? 'dev' : 'prod'])
   },
 
   plugins: [
@@ -95,6 +120,10 @@ export default {
   ].concat(plugins[debug ? 'dev' : 'prod']),
 
   postcss: () => [autoprefixer],
+
+  sassLoader: {
+    includePaths: [resolve(__dirname, '../node_modules')],
+  },
 
   stats: {
     assetsByChunkName: true,
