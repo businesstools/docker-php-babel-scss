@@ -1,4 +1,4 @@
-import { join, basename } from 'path';
+import { join, basename, resolve } from 'path';
 import webpack from 'webpack';
 import autoprefixer from 'autoprefixer';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
@@ -14,7 +14,7 @@ const verbose = process.env.VERBOSE === '1';
 const assetsPath = join(__dirname, '..', 'assets');
 const targetPath = join(__dirname, '..', 'html');
 
-const extractCSS = new ExtractTextPlugin('[name].css');
+const extractCSS = new ExtractTextPlugin(`${pkg.name}.css`);
 
 const plugins = {
   dev: [
@@ -23,7 +23,7 @@ const plugins = {
     new webpack.NoErrorsPlugin(),
   ],
   prod: [
-    // new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
+    new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
     extractCSS,
   ],
 };
@@ -58,13 +58,15 @@ const entries = {
 
 glob.sync(join(assetsPath, 'scss', '*.scss'), { ignore: '**/_*.scss' })
   .forEach((filename) => {
-    entries[basename(filename, '.scss')] = [filename];
+    entries.main.push(filename);
+    // entries[basename(filename, '.scss')] = [filename];
   });
 
 if (debug) {
-  Object.keys(entries).forEach(key => {
-    entries[key].unshift(hmrEntry);
-  });
+  entries.main.unshift(hmrEntry);
+  // Object.keys(entries).forEach(key => {
+  //   entries[key].unshift(hmrEntry);
+  // });
 }
 
 export default {
@@ -78,7 +80,7 @@ export default {
   output: {
     filename: `${pkg.name}.js`,
     path: targetPath,
-    publicPath: '/',
+    // publicPath: '/',
   },
 
   resolve: {
@@ -121,6 +123,10 @@ export default {
   ].concat(plugins[debug ? 'dev' : 'prod']),
 
   postcss: () => [autoprefixer],
+
+  sassLoader: {
+    includePaths: [resolve(__dirname, '../node_modules')],
+  },
 
   stats: {
     assetsByChunkName: true,

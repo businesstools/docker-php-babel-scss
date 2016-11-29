@@ -8,8 +8,10 @@
 <html>
 <head>
   <title>Hello World.</title>
-  <meta charset="utf8" />
-  <link href="/styles.css" rel="stylesheet" />
+  <meta charset="utf-8" />
+  <?php if (getenv('NODE_ENV') !== 'development'): ?>
+  <link href="/<?= $pkg->name ?>.css" rel="stylesheet" />
+  <?php endif ?>
 </head>
 <body>
   <h1>Hello World.</h1>
