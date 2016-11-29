@@ -1,5 +1,4 @@
 node_modules
-html/*.js
-html/*.css
-html/*.hot-update.json
-html/*.hot-update.js
+**/*.hot-update.json
+**/*.hot-update.js
+html/min
