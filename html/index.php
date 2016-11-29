@@ -10,13 +10,13 @@
   <title>Hello World.</title>
   <meta charset="utf-8" />
   <?php if (getenv('NODE_ENV') !== 'development'): ?>
-  <link href="/<?= $pkg->name ?>.css" rel="stylesheet" />
+  <link href="/min/<?= $pkg->name ?>.css" rel="stylesheet" />
   <?php endif ?>
 </head>
 <body>
   <h1>Hello World.</h1>
   <small><?= phpversion() ?></small>
 
-  <script src="/<?= $pkg->name ?>.js"></script>
+  <script src="/min/<?= $pkg->name ?>.js"></script>
 </body>
 </html>

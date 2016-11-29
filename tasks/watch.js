@@ -1,4 +1,4 @@
-// "build": "node-sass --include-path node_modules/normalize-scss/sass --output-style compressed -o html/assets/css html/assets/scss/snooze.scss",
+import { join } from 'path';
 import webpack from 'webpack';
 import webpackConfig from './webpack.config';
 import express from 'express';
@@ -32,11 +32,11 @@ export default function watch() {
     reload: true,
   }));
 
-  app.use(express.static(__dirname + '/../html/'));
+  app.use(express.static(join(__dirname, '..', 'html')));
 
   app.get('/', (req, res, next) => {
     res.send(`<!doctype html><html><head></head><body><h1>:-)</h1>
-      <script src="/bt-baseimage-php-babel-scss.js"></script>
+      <script src="/min/bt-baseimage-php-babel-scss.js"></script>
       </body></html>`);
   })
   app.listen(8080);

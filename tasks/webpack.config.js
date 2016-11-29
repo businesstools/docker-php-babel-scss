@@ -11,8 +11,9 @@ const hmrEntry = 'webpack-hot-middleware/client';
 const debug = process.env.NODE_ENV === 'development';
 const verbose = process.env.VERBOSE === '1';
 
+const targetDir = 'min/';
 const assetsPath = join(__dirname, '..', 'assets');
-const targetPath = join(__dirname, '..', 'html');
+const targetPath = join(__dirname, '..', 'html', `${targetDir}`);
 
 const extractCSS = new ExtractTextPlugin(`${pkg.name}.css`);
 
@@ -59,14 +60,10 @@ const entries = {
 glob.sync(join(assetsPath, 'scss', '*.scss'), { ignore: '**/_*.scss' })
   .forEach((filename) => {
     entries.main.push(filename);
-    // entries[basename(filename, '.scss')] = [filename];
   });
 
 if (debug) {
   entries.main.unshift(hmrEntry);
-  // Object.keys(entries).forEach(key => {
-  //   entries[key].unshift(hmrEntry);
-  // });
 }
 
 export default {
@@ -80,7 +77,7 @@ export default {
   output: {
     filename: `${pkg.name}.js`,
     path: targetPath,
-    // publicPath: '/',
+    publicPath: `/${targetDir}`,
   },
 
   resolve: {
