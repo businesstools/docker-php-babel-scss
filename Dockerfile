@@ -10,7 +10,7 @@ WORKDIR /var/www
 ADD ./package.json /var/www
 ADD ./.babelrc /var/www/.babelrc
 
-RUN npm install
+RUN rm -rf html && npm install
 
 ADD ./tasks /var/www/tasks
 ADD ./assets/src/index.js /var/www/assets/src/index.js
