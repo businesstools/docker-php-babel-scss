@@ -1,6 +1,6 @@
 {
   "name": "bt-baseimage-php-babel-scss",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "scripts": {
     "build": "babel-node tasks/run build",
@@ -23,6 +23,7 @@
     "file-loader": "^0.9.0",
     "fs-promise": "^1.0.0",
     "glob": "^7.1.1",
+    "json": "^9.0.4",
     "node-sass": "^3.13.0",
     "normalize-scss": "^6.0.0",
     "ora": "^0.3.0",
