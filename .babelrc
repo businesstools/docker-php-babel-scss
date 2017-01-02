@@ -2,6 +2,7 @@
   "presets": ["es2015", "stage-0"],
   "plugins": [
     "transform-runtime",
-    "add-module-exports"
+    "add-module-exports",
+    "transform-decorators-legacy"
   ]
 }
