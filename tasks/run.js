@@ -23,7 +23,7 @@ if (module.parent === null && process.argv.length > 2) {
   const module = process.argv[2];
 
   const filename = join(__dirname, `${module}.js`); // eslint-disable-line no-underscore-dangle
-  const func = require(filename); // eslint-disable-line global-require
+  const func = require(filename).default; // eslint-disable-line global-require
 
   run(func).catch(err => console.error(err.stack));
 }
