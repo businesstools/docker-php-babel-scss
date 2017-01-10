@@ -1,4 +1,4 @@
-FROM leyyinad/nginx-php
+FROM leyyinad/nginx-php:1.5.0
 MAINTAINER Daniel Haus <daniel.haus@businesstools.de>
 
 ADD ./bin/watch.setup.sh /usr/local/bin/
@@ -10,9 +10,9 @@ WORKDIR /var/www
 ADD ./package.json /var/www
 ADD ./.babelrc /var/www/.babelrc
 
-RUN rm -rf html && npm install
+RUN rm -rf html && yarn
 
 ADD ./tasks /var/www/tasks
 ADD ./assets/src/index.js /var/www/assets/src/index.js
 
-RUN npm run build
+RUN yarn build
