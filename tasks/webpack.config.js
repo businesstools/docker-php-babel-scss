@@ -70,7 +70,7 @@ export default {
   entry: entries,
 
   debug,
-  devtool: debug ? '#inline-source-map' : false,
+  devtool: debug ? 'cheap-module-eval-source-map' : false,
 
   context: assetsPath,
 
