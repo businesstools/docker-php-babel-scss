@@ -124,7 +124,10 @@ export default {
 
   module: {
     rules: [
-      { test: /\.json$/, loader: 'json' },
+      {
+        test: /\.json$/,
+        loader: 'json-loader',
+      },
       {
         test: /\.jsx?$/,
         loader: 'babel-loader',
