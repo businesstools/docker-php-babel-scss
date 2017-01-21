@@ -21,7 +21,7 @@ const plugins = {
   dev: [
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
   ],
   prod: [
     new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
@@ -29,26 +29,63 @@ const plugins = {
   ],
 };
 
-const loaders = {
+const rules = {
   dev: [
     {
-      test: /\.scss/,
-      loaders: [
-        'style',
-        'css?sourceMap',
-        'postcss',
-        'sass?modules&localIdentName=[name]_[local]_[hash:base64:3]',
+      test: /\.scss$/,
+      use: [
+        {
+          loader: 'style-loader',
+        },
+        {
+          loader: 'css-loader',
+          query: {
+            camelCase: true,
+            sourceMap: true,
+          }
+        },
+        {
+          loader: 'postcss-loader',
+          query: {
+            sourceMap: true,
+          }
+        },
+        {
+          loader: 'sass-loader',
+          query: {
+            sourceMap: true,
+            modules: true,
+            localIdentName: '[name]_[local]_[hash:base64:3]',
+          },
+        },
       ],
     },
   ],
   prod: [
     {
       test: /\.scss/,
-      loader: extractCSS.extract('style', [
-        'css',
-        'postcss',
-        'sass?minimize&modules&localIdentName=[name]_[local]_[hash:base64:3]',
-      ]),
+      loader: extractCSS.extract({
+        fallbackLoader: 'style-loader',
+        loader: [
+          {
+            loader: 'css-loader',
+            query: {
+              camelCase: true,
+            },
+          },
+          {
+            loader: 'postcss-loader',
+          },
+          {
+            loader: 'sass-loader',
+            query: {
+              minimize: true,
+              modules: true,
+              localIdentName: '[name]_[local]_[hash:base64:3]',
+            },
+          },
+        ]
+      }),
     },
   ],
 }
@@ -69,7 +106,6 @@ if (debug) {
 export default {
   entry: entries,
 
-  debug,
   devtool: debug ? 'cheap-module-eval-source-map' : false,
 
   context: assetsPath,
@@ -81,34 +117,36 @@ export default {
   },
 
   resolve: {
-    modulesDirectories: ['node_modules'],
-    extensions: ['', '.js', '.json', '.jsx'],
+    extensions: ['.js', '.json', '.jsx'],
   },
 
   externals: [],
 
   module: {
-    loaders: [
+    rules: [
       { test: /\.json$/, loader: 'json' },
       {
         test: /\.jsx?$/,
-        loader: 'babel',
+        loader: 'babel-loader',
         exclude: /node_modules/,
       },
       {
         test: /\.(ttf|eot|woff2?)($|\?)/,
-        loader: `url${debug ? '' : '?limit=10000'}`
+        loader: 'url-loader',
+        query: {
+          limit: debug ? '' : 10000,
+        },
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/,
-        loader: 'url',
+        loader: 'url-loader',
         exclude: /favicon\.png$/,
       },
       {
         test: /favicon\.png$/,
-        loader: 'file'
+        loader: 'file-loader'
       },
-    ].concat(loaders[debug ? 'dev' : 'prod'])
+    ].concat(rules[debug ? 'dev' : 'prod'])
   },
 
   plugins: [
@@ -117,13 +155,18 @@ export default {
       'process.env': { NODE_ENV: `"${process.env.NODE_ENV}"` },
       DEBUG: debug,
     }),
+    new webpack.LoaderOptionsPlugin({
+      debug,
+      minimize: !debug,
+      options: {
+        context: '/',
+        postcss: [autoprefixer],
+        sassLoader: {
+          includePaths: [resolve(__dirname, '../node_modules')],
+        },
+      },
+    }),
   ].concat(plugins[debug ? 'dev' : 'prod']),
-
-  postcss: () => [autoprefixer],
-
-  sassLoader: {
-    includePaths: [resolve(__dirname, '../node_modules')],
-  },
 
   stats: {
     assetsByChunkName: true,
