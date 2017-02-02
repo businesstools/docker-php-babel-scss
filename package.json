@@ -1,6 +1,6 @@
 {
   "name": "bt-baseimage-php-babel-scss",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "private": true,
   "scripts": {
     "build": "babel-node tasks/run build",
