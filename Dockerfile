@@ -1,4 +1,4 @@
-FROM leyyinad/nginx-php:1.5.1
+FROM businesstools/nginx-php:1.5.1
 MAINTAINER Daniel Haus <daniel.haus@businesstools.de>
 
 ADD ./bin/watch.setup.sh /usr/local/bin/
