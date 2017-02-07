@@ -65,7 +65,7 @@ const rules = {
     {
       test: /\.scss/,
       loader: extractCSS.extract({
-        fallbackLoader: 'style-loader',
+        fallback: 'style-loader',
         loader: [
           {
             loader: 'css-loader',
