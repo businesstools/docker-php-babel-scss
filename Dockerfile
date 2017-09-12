@@ -1,18 +1,23 @@
-FROM businesstools/nginx-php:1.6.1
+FROM businesstools/nginx-php:1.7.0
 MAINTAINER Daniel Haus <daniel.haus@businesstools.de>
 
-ADD ./bin/watch.setup.sh /usr/local/bin/
-ADD ./bin/watch.run.sh /usr/local/bin/
+COPY \
+  bin/watch.setup.sh \
+  bin/watch.run.sh \
+  /usr/local/bin/
 
 RUN ln -s /usr/local/bin/watch.setup.sh /etc/my_init.d/watch.setup.sh
 
 WORKDIR /var/www
-ADD ./package.json /var/www
-ADD ./.babelrc /var/www/.babelrc
+COPY \
+  package.json \
+  yarn.lock \
+  .babelrc \
+  /var/www/
 
 RUN rm -rf html && yarn
 
-ADD ./tasks /var/www/tasks
-ADD ./assets/src/index.js /var/www/assets/src/index.js
+COPY ./tasks /var/www/tasks/
+COPY ./assets/src/index.js /var/www/assets/src/
 
 RUN yarn build
