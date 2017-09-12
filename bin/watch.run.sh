@@ -2,7 +2,7 @@
 
 if [ "$NODE_ENV" = "development" ]; then
     echo "Running in development mode"
-    cd /var/www && npm run build && exec npm run watch
+    cd /var/www && yarn build && exec yarn watch
 else
     echo "Running in production mode"
 fi
